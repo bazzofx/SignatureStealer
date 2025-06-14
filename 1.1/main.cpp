@@ -12,11 +12,6 @@ int main(int argc, char* argv[]) {
     std::string src = argv[1];
     std::string dst = argv[2];
 
-    if (!copy_signature(src, dst)) {
-        std::cerr << "Failed to copy digital signature.\n";
-        return 1;
-    }
-
     // Convert paths to wide strings for resource functions
     std::wstring wsrc(src.begin(), src.end());
     std::wstring wdst(dst.begin(), dst.end());
@@ -26,6 +21,11 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::cout << "Successfully copied signature and version info resource.\n";
+    if (!copy_signature(src, dst)) {
+        std::cerr << "Failed to copy digital signature.\n";
+        return 1;
+    }
+
+    std::cout << "Successfully copied version info resource and signature.\n";
     return 0;
 }
