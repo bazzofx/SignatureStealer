@@ -26,7 +26,7 @@ bool copy_signature(const std::string& src_path, const std::string& dst_path) {
         return false;
     }
 
-    // Read NT Headers
+    // Read NT Headers signature
     src.seekg(dos.e_lfanew, std::ios::beg);
     DWORD nt_sig = 0;
     src.read(reinterpret_cast<char*>(&nt_sig), sizeof(nt_sig));
@@ -52,7 +52,7 @@ bool copy_signature(const std::string& src_path, const std::string& dst_path) {
         return false;
     }
 
-    // Read certificate blob (located at a file offset, not RVA)
+    // Read certificate blob (located at file offset, not RVA)
     std::vector<char> certBlob(certDir.Size);
     src.seekg(certDir.VirtualAddress, std::ios::beg);
     src.read(certBlob.data(), certDir.Size);
@@ -120,16 +120,15 @@ bool copy_signature(const std::string& src_path, const std::string& dst_path) {
     return true;
 }
 
-// Copy VERSIONINFO resource from src to dst
 bool copy_version_resource(const std::wstring& src_path, const std::wstring& dst_path) {
-    // Load source DLL as datafile
     HMODULE hSrc = LoadLibraryExW(src_path.c_str(), nullptr, LOAD_LIBRARY_AS_DATAFILE);
     if (!hSrc) {
         std::wcerr << L"Failed to load source DLL: " << src_path << L"\n";
         return false;
     }
 
-    HRSRC hRes = FindResourceW(hSrc, MAKEINTRESOURCEW(VS_VERSION_INFO), MAKEINTRESOURCEW(16)); // 16 == RT_VERSION
+    // Use numeric IDs for resource type and name (1 = VS_VERSION_INFO, 16 = RT_VERSION)
+    HRSRC hRes = FindResourceW(hSrc, MAKEINTRESOURCEW(1), MAKEINTRESOURCEW(16));
     if (!hRes) {
         std::wcerr << L"No version resource found in source DLL\n";
         FreeLibrary(hSrc);
@@ -151,7 +150,6 @@ bool copy_version_resource(const std::wstring& src_path, const std::wstring& dst
         return false;
     }
 
-    // Begin updating target DLL resources
     HANDLE hUpdate = BeginUpdateResourceW(dst_path.c_str(), FALSE);
     if (!hUpdate) {
         std::wcerr << L"Failed to open destination DLL for resource update: " << dst_path << L"\n";
@@ -159,18 +157,17 @@ bool copy_version_resource(const std::wstring& src_path, const std::wstring& dst
         return false;
     }
 
-    // Update VERSIONINFO resource in destination DLL
     BOOL updateResResult = UpdateResourceW(
         hUpdate,
         MAKEINTRESOURCEW(16),
-        MAKEINTRESOURCEW(VS_VERSION_INFO),
+        MAKEINTRESOURCEW(1),
         MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL),
         pResData,
         resSize);
 
     if (!updateResResult) {
         std::wcerr << L"Failed to update version resource in destination DLL\n";
-        EndUpdateResourceW(hUpdate, TRUE); // Discard changes
+        EndUpdateResourceW(hUpdate, TRUE);
         FreeLibrary(hSrc);
         return false;
     }
