@@ -1,26 +1,31 @@
 #include "steal.h"
+#include <iostream>
+#include <string>
+#include <windows.h>
 
 int main(int argc, char* argv[]) {
-
     if (argc != 3) {
-        std::fprintf(stderr,
-            "Usage: %s <signed_src> <target>\n", argv[0]);
-        return EXIT_FAILURE;
+        std::cerr << "Usage: SignatureKid.exe <signed.dll> <unsigned.dll>\n";
+        return 1;
     }
 
-    const std::string src = argv[1];
-    const std::string dst = argv[2];
+    std::string src = argv[1];
+    std::string dst = argv[2];
 
-    hook_registry();
+    // Convert paths to wide strings for resource functions
+    std::wstring wsrc(src.begin(), src.end());
+    std::wstring wdst(dst.begin(), dst.end());
 
-    if (!steal(src, dst)) {
-        std::fprintf(stderr,
-            "Failed to steal certificate from \"%s\" to \"%s\"\n",
-            src.c_str(), dst.c_str());
-        return EXIT_FAILURE;
+    if (!copy_version_resource(wsrc, wdst)) {
+        std::cerr << "Failed to copy version resource.\n";
+        return 1;
     }
 
-    std::printf("Certificate successfully copied from \"%s\" to \"%s\"\n",
-        src.c_str(), dst.c_str());
-    return EXIT_SUCCESS;
+    if (!copy_signature(src, dst)) {
+        std::cerr << "Failed to copy digital signature.\n";
+        return 1;
+    }
+
+    std::cout << "Successfully copied version info resource and signature.\n";
+    return 0;
 }
