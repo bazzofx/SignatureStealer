@@ -6,5 +6,10 @@ Beyond Stealing, Signature Kid goes a step further by Windows Internal to trick 
 
 # Compile Binary
 ```
-g++ main.cpp steal.cpp -o SignatureKid.exe
+g++ main.cpp steal.cpp -o sigsteal.exe
+```
+
+# Usage
+```
+sigsteal.exe kernel32.dll fakeFile.exe
 ```
