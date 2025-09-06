@@ -11,5 +11,10 @@ g++ main.cpp steal.cpp -o sigsteal.exe
 
 # Usage
 ```
-sigsteal.exe kernel32.dll fakeFile.exe
+sigsteal.exe GoogleChrome.exe fakeFile.exe
+```
+
+# Usage
+```
+sigsteal.exe kernel32.dll fakeDll.dll
 ```
