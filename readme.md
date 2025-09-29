@@ -4,15 +4,17 @@ Sig Steal is a tool that steals a signature from a file and copy it to whathever
 Beyond Stealing, Sig Steal goes a step further by Windows Internal to trick the system to treat the copied signature as valid.
 
 Obs: We can only clone a x32 binary to x32 , and x64 binary to x64
+use the sysInternals tool `sigcheck` to verify the signature and the format of the file
 
-# Compile Binary
+# Compile without having to deal with dependencies, recommended!
+```
+g++ main.cpp steal.cpp -o sigsteal.exe -lws2_32 -lkernel32 -luser32
+```
+# Compile Binary (you will need to bring the .dll with you)
 ```
 g++ main.cpp steal.cpp -o sigsteal.exe
 ```
-## Compile without having to deal with dependencies, recommended.
-```
-g++ main.cpp steal.cpp -o SignatureKidProperties.exe -lws2_32 -lkernel32 -luser32
-```
+
 # Usage
 ```
 sigsteal.exe GoogleChrome.exe fakeFile.exe
@@ -21,4 +23,10 @@ sigsteal.exe GoogleChrome.exe fakeFile.exe
 # Usage
 ```
 sigsteal.exe kernel32.dll fakeDll.dll
+```
+
+## Compiling PowerShell to .EXE
+Obs2: To compile a powershell .ps1 to .exe we use the below command from `ps2exe` suite
+```
+ps2exe -x64 -inputFile .\script.ps1 -outputFile .\script.exe
 ```
