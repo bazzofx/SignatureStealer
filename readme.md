@@ -8,7 +8,10 @@ Beyond Stealing, Sig Steal goes a step further by Windows Internal to trick the 
 ```
 g++ main.cpp steal.cpp -o sigsteal.exe
 ```
-
+## Compile without having to deal with dependencies, recommended.
+```
+g++ main.cpp steal.cpp -o SignatureKidProperties.exe -lws2_32 -lkernel32 -luser32
+```
 # Usage
 ```
 sigsteal.exe GoogleChrome.exe fakeFile.exe
