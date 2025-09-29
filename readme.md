@@ -3,6 +3,7 @@
 Sig Steal is a tool that steals a signature from a file and copy it to whathever file you want.
 Beyond Stealing, Sig Steal goes a step further by Windows Internal to trick the system to treat the copied signature as valid.
 
+Obs: We can only clone a x32 binary to x32 , and x64 binary to x64
 
 # Compile Binary
 ```
